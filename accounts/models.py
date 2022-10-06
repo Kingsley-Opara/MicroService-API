@@ -7,6 +7,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.core.mail import send_mail
 import pathlib
+from django.http import Http404
 BASE_DIR = pathlib.Path(__file__).resolve().parent
 
 
@@ -84,12 +85,12 @@ def post_save_signal(sender, instance, created, *args, **kwargs):
     html_template = str(f'{BASE_DIR}/templates/email_sent.html')
     message = render_to_string(html_template, {'uid': instance.unique_id})
     if created:
-        instance.username = instance.email
-        if not instance.email: 
-            instance.email = instance.username
-
-        send_mail(subject, '', '', [instance.email], fail_silently=False, html_message=message)
-    
+        if not instance.username: 
+            instance.username = instance.email
+        try:
+            send_mail(subject, '', '', [instance.email], fail_silently=False, html_message=message)
+        except:
+            raise Http404()
         save_method(instance, save=True)
 
 post_save.connect(post_save_signal, sender=User)
