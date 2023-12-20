@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 import secrets
-import random
 from django.db.models.signals import pre_save, post_save
 from django.template.loader import render_to_string
 from django.conf import settings
@@ -61,7 +60,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True, verbose_name = 'Email')
-    unique_id = models.CharField(default= f'{secrets.token_urlsafe(6)}{random.randint(0, 9)}', max_length=15, 
+    unique_id = models.CharField(default= f'{secrets.token_urlsafe(6)}{secrets.SystemRandom().randint(0, 9)}', max_length=15, 
     editable=False, unique=True, null=True, blank=True)
     username = models.CharField(max_length=35, null=True, blank=True, unique=True)
     created = models.DateTimeField(auto_now_add=True)
