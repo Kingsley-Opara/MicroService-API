@@ -18,7 +18,7 @@ class TestApiRequest(TestCase):
             'username': username,
             'password': password
         }
-        res = requests.post(endpoint, json=data)
+        res = requests.post(endpoint, json=data, timeout=60)
         self.assertEqual (res.status_code, 200)
     
 
